@@ -2,40 +2,38 @@
 
 namespace App\Contracts;
 
+
 class Base
 {
-/*	public function __set($property, $value)
+	protected $data = [];
+
+	public function __construct(array $arguments = [])
 	{
-		if(property_exists($this, $property)) {
-	    $this->$property = $value;
-	  	}
+		$this->data = $arguments;
 	}
 
-	public function __get($property)
-	{
-		if(property_exists($this, $property)) {
-	    return $this->$property;
-	  	}
-	}
-	public function __unset($name)
+
+	public static function __callStatic($name, $arguments)
     {
-        echo "Unsetting '$name'\n";
-        unset($this->data[$name]);
-    }*/
+    	$class_name = get_called_class();
+	    $class = new $class_name;
 
-    public static function create(array $array)
+	    return call_user_func_array(array($class, $name), $arguments);
+
+    }
+
+    public function __call($name, $arguments)
     {
-    	$class = get_called_class();
+    	if($name == 'create'){
+    		return call_user_func_array(array($this, $name), $arguments);
+    	}
+    }
 
-
-    	$data = new $class;
-
-		foreach ($array as $key => $value)
-		{
-		    $data->$key = $value;
-		}
-
-		return $data;
+    protected function create(array $arguments)
+    {
+    	$new_class = get_class($this);
+    	$model = new $new_class($arguments);
+    	return $model;
 
     }
 
@@ -44,15 +42,29 @@ class Base
     	return (array)$this;
     }
 
-}
-
-class A extends Base
-{
-    public function setSlugAttribute($value) {
-         $this->slug = strtolower($value);
+    public function __set($name, $value)
+    {
+        $this->data[$name] = $value;
     }
+
+    public function __get($name)
+    {
+    	$f = 'get'.ucfirst($name).'Attribute';
+    	if(method_exists($this, $f)) {
+	    	return call_user_func(array($this, $f));;
+    	}
+
+        if (array_key_exists($name, $this->data)) {
+            return $this->data[$name];
+        }
+    }
+
 }
 
+
+
+
+/*
 class B extends Base
 {
     protected $appends = [
@@ -67,7 +79,11 @@ class B extends Base
         return $this->first_name . ' ' . $this->last_name;
     }
 }
+*/
 
-$data = A::create(["id"=>"5", "slug"=>"TEST"]);
-/*var_dump($data->toArray());*/
-/*var_dump($data instanceof A);*/
+
+
+//$a->bla = '3';
+/*var_dump($data);
+die();
+*/
