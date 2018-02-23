@@ -34,24 +34,71 @@ class BaseTest extends TestCase
 
 	public function testAccessor()
 	{
+
+		$val = 25;
         // Create a prophecy for the Observer class.
         $observer = $this->prophesize(A::class);
 
         // Set up the expectation for the update() method
         // to be called only once and with the string 'something'
         // as its parameter.
-        $observer->getNameAttribute()->shouldBeCalled();
+        $observer->getNameAttribute($val)->shouldBeCalled();
+
+        $model = $observer->reveal();
+
+        $model->name = $val;
+
+        $model->name;
+
+
+/*        // Create a prophecy for the Observer class.
+        $observer = $this->prophesize(A::class);
+
+        // Set up the expectation for the update() method
+        // to be called only once and with the string 'something'
+        // as its parameter.
+        $observer->getNameAttribute(null)->shouldBeCalled();
 
         $model = $observer->reveal();
 
         $model->name;
+        */
 	}
+
+	/* mutators - seter */
+
+	public function testMutator()
+	{
+
+		$val = 25;
+
+        $observer = $this->prophesize(B::class);
+
+        $observer->setNameAttribute($val)->shouldBeCalled();
+
+        $model = $observer->reveal();
+
+        $model->name = $val;
+
+        $model->name;
+
+	}
+
+
 }
 
 
 class A extends Base
 {
-	public function getNameAttribute()
+	public function getNameAttribute($val)
+	{
+		//
+	}
+}
+
+class B extends Base
+{
+	public function setNameAttribute($val)
 	{
 		//
 	}

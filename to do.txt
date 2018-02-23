@@ -1,0 +1,139 @@
+sublime linter
+--------------------------------------------------------------------------------------------
+hint : error handler!!! +
+
+custom validation - db!! +
+
+gates + (prima array!!!) +
+
+oop (traits!) +
+
+Solid principles: +
+		- Single Responsibility
+		- Open-Closed
+		- Liskov Substitution
+		- Interface Segregation
+		- Dependency Inversion
+
+function boot +
+
+trait + (get_class($this) ) + 
+
+soft deletions (withTrashed(), delete(), restore()) +
+
+Many To Many Polymorphic Relations +
+
+trait - taggable - tag +
+
+query scopes - 'WithTagScope' - trait ((global)with tags+, (local)without tags+)
+
+trait searchable, protected, searchTerm (scope koji cu pozvat)
+
+request var nije unutar klase nego se proslijedjuje
+
+Note::searchTerm(param sta da se uzima iz requesta)->paginate(10);
+Note::searchTerm()->first();
+
+User::searchTerm()->get();
+
+u modelu 
+use searchable;
+protected $searchable_fields=['name', 'email']; +
+
+--------------------------------------------------------------------------------------------
+Eloquent: Mutators
+
+kreirati klasu Base koja mora emulirati odredjene funkcionalnosti iz eloquent modela
+
+klasa A prosiruje klasu Base
+
+$a = A::create(['id'=>5, 'slug'=>'TEST'])  - create kreira instancu klase nad kojom je pozvana
+
+(test) get_class($a)=='A';
+
+$a->toArray() => A::create(['id'=>5, 'slug'=>'test'])
+
+treba podržati logiku vezanu za 'appends', 'hidden', 'accessors', 'mutators'
+
+class B ex Base {
+	$appends=['test'];
+	$hidden=['slug'];
+	public function getTestAttributes(){ return 'vrijednost iz accessora';}
+}
+
+$b = B::create(['id'=>5, 'slug'=>'ja']);
+$b = toArray() => ['id'=> 5, 'test'=> 'vrijednost iz accessora'];
+
+
+projekt:
+	+ src	
+	  + contracts
+	    - base model
+	+ tests
+	  <empty folder>
+	- composer.json
+
+
+composer.json 
+'require':{
+'psr-4':{
+'filip': 'src/'
+
+TESTS - laracasts
+
+magic metode!!!
+
+koja klasa je pozvala metodu create ($class = get_called_class();) call_user_func_array, callable, get_function_args
+
+create (contstruct) salje i get_class($this)
+
+metoda create treba vracat novu instancu iste klase
+
+
+mock
+-------------------------------------------------------------------------------------------
+ 
+call_user_function
+--------------------
+
+array_keys, array_dif, array_map
+--------------------
+array_filter, !in_array
+
+
+    public function toArray()
+    {
+    	/*$new_array = (array)$this->data;
+    	$hidden_array = (array)$this->hidden;
+
+    	foreach ($hidden_array as $key => $value) {
+    		if(array_key_exists($value, $new_array)) {
+    			unset($new_array[$value]);
+    		}
+    	}
+    	return $new_array;*/
+//-------------------
+    	/*$new_array = (array)$this->data;
+    	$hidden_array = (array)$this->hidden;
+
+    	$filltered = array_diff_key($new_array, array_flip($hidden_array));
+
+    	return $filltered;*/
+//-------------------
+    	$new_array = (array)$this->data;
+    	$hidden_array = array_values((array)$this->hidden);
+
+    	$filtered_array = array_filter((array)$this->data, function ($key) use ($hidden_array) {
+    		return !in_array($key, array_values($hidden_array));
+    		}, ARRAY_FILTER_USE_KEY);
+    	return $filtered_array;
+
+    }
+-----------------------------------------------------------------------------
+
+appends
+
+hidden ima veci prioritet
+napraviti kopiju data
+merge data i appends
+provjeriti ime u appends
