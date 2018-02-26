@@ -137,3 +137,12 @@ hidden ima veci prioritet
 napraviti kopiju data
 merge data i appends
 provjeriti ime u appends
+
+pisanje dokumentacije
+
+
+fillable, guarded
+
+
+-----------------------------------------------------------------
+RUTIRANJE
